@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Session,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -19,6 +20,9 @@ import {
 } from 'src/interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/cureent-user.decorator';
+import { User } from './user.entity';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -29,9 +33,8 @@ export class UsersController {
   ) {}
 
   @Get('/me')
-  getMe(@Session() session: any) {
-    return this.usersService.findOne(session.userId);
-  }
+  @UseGuards(AuthGuard)
+  getMe(@CurrentUser() user: User) {}
 
   @Post('/signout')
   async signOut(@Session() session: any) {
