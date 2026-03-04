@@ -24,7 +24,7 @@ export class AuthService {
     return user;
   }
 
-  async signin(email: string, password) {
+  async signin(email: string, password: string) {
     const [user] = await this.userService.find(email);
 
     if (!user) {
@@ -35,5 +35,20 @@ export class AuthService {
     if (!validPassword) {
       throw new UnauthorizedException('Invalid Credentials');
     }
+
+    return user;
+  }
+
+  async signout(userId: any) {
+    if (!userId) {
+      throw new BadRequestException('Provide userId');
+    }
+    const user = await this.userService.findOne(userId);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return user;
   }
 }
